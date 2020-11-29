@@ -1,0 +1,63 @@
+#region Imports
+import pandas as pd 
+import numpy as np
+import os
+import matplotlib
+import matplotlib.pyplot as plt
+#endregion
+
+#region File dir'
+Directory = 'CURIE.xlsx'
+Parent_dir  = 'D:/forma/Programming_Disc/VScode/Temp_Curie/Curie_temp/Data/CURIE.xlsx'
+#path = os.path.join(Parent_dir)
+#endregion
+
+#region File-to numpy+var
+f = pd.read_excel(Parent_dir,squeeze=True)
+f.head()
+f = f.to_numpy()
+T = []
+DY = []
+#endregion
+
+#region Data_parsh
+for i in f:
+    Temp = i[1]
+    Xp_data = i[2:130]
+    Yp_data  = i[130:258]
+    Xn_data = i[258:386]
+    Yn_data  = i[386:]
+    X_data = np.append(Xp_data,Xn_data)
+    Y_data = np.append(Yp_data,Yn_data)
+    Y_Xmax = np.argmax(X_data)
+    Y_Xmin = np.argmin(X_data)
+    DeltaY = Y_data[Y_Xmax]-Y_data[Y_Xmin]
+    T.append(Temp)
+    DY.append(DeltaY)
+T = np.array(T)
+DY = np.array(DY)
+#endregion
+
+#region Plot
+'''fig, ax = plt.subplots()
+ax.plot(T, DY)
+ax.set(xlabel='Temp (K)', ylabel='voltageY (V)',
+       title='Curie Vpp(T)')
+ax.grid()
+fig.savefig("CurieVpp(T).png")
+plt.show()'''
+#endregion
+
+#region Error Y
+E_DY = [(10**(-8))/((12)**0.5)]*len(T)
+#endregion
+
+#region Outpot to excel
+T = np.array(T)
+T = T+273.15
+DY = np.array(DY)
+E_DY = np.array(E_DY)
+df = pd.DataFrame({'TEMP':T,"V":DY,"ERROR_V":E_DY})
+filepath = r'C:\Users\forma\Programming\VScode_Projects\CURIE_R4MAT.xlsx'
+df.to_excel(filepath, index=False)
+#endregion
