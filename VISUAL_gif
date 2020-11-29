@@ -1,0 +1,23 @@
+import imageio
+import os
+from pathlib import Path
+import re
+
+image_path = Path(r'D:\forma\Programming_Disc\MATLAB_PROJECTS\CURIE')
+images = sorted(list(image_path.glob('*.png')))
+lst=[]
+sorted_images =[]
+for i in images:
+    file_num=re.sub("[^0-9]", "", str(i))
+    lst.append((int(file_num),i))
+sorted_by_first= sorted(lst, key=lambda tup: tup[0],reverse=True)    
+for i in sorted_by_first:
+    sorted_images.append(i[1])
+#sorte_img = sorted(images, key=lambda y: int(re.sub("[^0-9]", "", images)))
+#sorted_images = sorted(images, key=lambda x:int(x[5:-4]))
+image_list = []
+for file_name in sorted_images:
+    image_list.append(imageio.imread(file_name))
+#print(image_list)
+
+imageio.mimsave(r'D:\forma\Programming_Disc\MATLAB_PROJECTS\CURIE\CURIE_chi2.gif', image_list,fps=0.2)
