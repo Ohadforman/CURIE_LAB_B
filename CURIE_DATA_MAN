@@ -18,6 +18,7 @@ f.head()
 f = f.to_numpy()
 T = []
 DY = []
+DY_ZH =[]
 #endregion
 
 #region Data_parsh
@@ -29,18 +30,23 @@ for i in f:
     Yn_data  = i[386:]
     X_data = np.append(Xp_data,Xn_data)
     Y_data = np.append(Yp_data,Yn_data)
+    X_HZ_D = abs(X_data)
+    X_HZ_INMIN = np.argmin(X_HZ_D)
+    DY_HZ = Y_data[X_HZ_INMIN]*2
     Y_Xmax = np.argmax(X_data)
     Y_Xmin = np.argmin(X_data)
     DeltaY = Y_data[Y_Xmax]-Y_data[Y_Xmin]
     T.append(Temp)
     DY.append(DeltaY)
-T = np.array(T)
+    DY_ZH.append(DY_HZ)
+T = np.array(T)+273.15
 DY = np.array(DY)
+DY_ZH = np.array(DY_ZH)
 #endregion
 
 #region Plot
 '''fig, ax = plt.subplots()
-ax.plot(T, DY)
+ax.plot(T, DY_ZH)
 ax.set(xlabel='Temp (K)', ylabel='voltageY (V)',
        title='Curie Vpp(T)')
 ax.grid()
@@ -54,10 +60,10 @@ E_DY = [(10**(-8))/((12)**0.5)]*len(T)
 
 #region Outpot to excel
 T = np.array(T)
-T = T+273.15
+T = T
 DY = np.array(DY)
 E_DY = np.array(E_DY)
-df = pd.DataFrame({'TEMP':T,"V":DY,"ERROR_V":E_DY})
-filepath = r'C:\Users\forma\Programming\VScode_Projects\CURIE_R4MAT.xlsx'
+df = pd.DataFrame({'T':T,"I":DY_ZH,"Ierr":E_DY})
+filepath = r'C:\Users\forma\Programming\VScode_Projects\CURIE_R4MAT_ZH.xlsx'
 df.to_excel(filepath, index=False)
 #endregion
